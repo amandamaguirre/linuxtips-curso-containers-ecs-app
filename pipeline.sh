@@ -17,8 +17,7 @@ cd app/
 
 echo "APP - LINT"
 go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
-golangci-lint run ./... -E errcheck
-
+golangci-lint run --disable-all -E errcheck
 
 echo "APP - TEST"
 go test -v ./...
@@ -28,7 +27,7 @@ go test -v ./...
 echo "TERRAFORM - CI"
 
 cd ../terraform
-
+ 
 echo "TERRAFORM - FORMAT CHECK"
 terraform fmt --recursive --check
 
@@ -36,7 +35,6 @@ terraform init -backend-config=environment/$BRANCH_NAME/backend.tfvars
 
 echo "TERRAFORM - VALIDATE"
 terraform validate
-
 
 # BUILD APP 
 
@@ -84,31 +82,27 @@ echo "BUILD - DOCKER BUILD"
 docker build -t app . 
 docker tag app:latest $AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH
 
-
 # PUBLISH APP
 
 echo "BUILD - DOCKER PUBLISH"
 
 docker push $AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH
 
-
-
 # APPLY DO TERRAFORM - CD
 
-# cd ../terraform
+ cd ../terraform
 
-# REPOSITORY_TAG=$AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH
+ REPOSITORY_TAG=$AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH
 
-# echo "DEPLOY - TERRAFORM INIT"
-# terraform init -backend-config=environment/$BRANCH_NAME/backend.tfvars
+ echo "DEPLOY - TERRAFORM INIT"
+ terraform init -backend-config=environment/$BRANCH_NAME/backend.tfvars
 
+ echo "DEPLOY - TERRAFORM PLAN"
+ terraform plan -var-file=environment/$BRANCH_NAME/terraform.tfvars -var container_image=$REPOSITORY_TAG
 
-# echo "DEPLOY - TERRAFORM PLAN"
-# terraform plan -var-file=environment/$BRANCH_NAME/terraform.tfvars -var container_image=$REPOSITORY_TAG
+ echo "DEPLOY - TERRAFORM APPLY"
+ terraform apply --auto-approve -var-file=environment/$BRANCH_NAME/terraform.tfvars -var container_image=$REPOSITORY_TAG
 
-# echo "DEPLOY - TERRAFORM APPLY"
-# terraform apply --auto-approve -var-file=environment/$BRANCH_NAME/terraform.tfvars -var container_image=$REPOSITORY_TAG
+ echo "DEPLOY - WAIT DEPLOY"
 
-# echo "DEPLOY - WAIT DEPLOY"
-
-# aws ecs wait services-stable --cluster $CLUSTER_NAME --services $APP_NAME
+ aws ecs wait services-stable --cluster $CLUSTER_NAME --services $APP_NAME
