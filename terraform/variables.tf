@@ -5,7 +5,8 @@ variable "cluster_name" {}
 variable "service_name" {}
 
 variable "container_image" {
-  
+  type = string
+  description = "Imagem com tag"
 }
 
 variable "service_port" {}
