@@ -20,10 +20,11 @@ ssm_listener          = "/linuxtips-ecs-cluster/ecs/lb/listener"
 ssm_private_subnet_1a = "/linuxtips-vpc/vpc/subnet_private_1a"
 ssm_private_subnet_1b = "/linuxtips-vpc/vpc/subnet_private_1b"
 ssm_private_subnet_1c = "/linuxtips-vpc/vpc/subnet_private_1c"
-ssm_alb               = "/linuxtips-ecs-cluster/ecs/lb/id"
+ssm_alb               = "/linuxtips-ecs-cluster/ecs/lb/internal/id"
 
 service_hosts = [
-  "app.linuxtips.demo"
+  #"app.linuxtips.demo"
+  "app.linuxtips-ecs-cluster.internal.com"
 ]
 
 environment_variables = [
