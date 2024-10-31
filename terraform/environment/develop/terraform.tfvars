@@ -16,7 +16,7 @@ service_launch_type = [
 ]
 service_task_count    = 3
 ssm_vpc_id            = "/linuxtips-vpc/vpc/vpc_id"
-ssm_listener          = "/linuxtips-ecs-cluster/ecs/lb/listener"
+ssm_listener          = "/linuxtips-ecs-cluster/ecs/lb/internal/listener"
 ssm_private_subnet_1a = "/linuxtips-vpc/vpc/subnet_private_1a"
 ssm_private_subnet_1b = "/linuxtips-vpc/vpc/subnet_private_1b"
 ssm_private_subnet_1c = "/linuxtips-vpc/vpc/subnet_private_1c"
@@ -74,3 +74,5 @@ scale_in_cooldown            = 60
 
 scale_tracking_cpu      = 50
 scale_tracking_requests = 30
+
+ssm_service_discovery_namespace = "/linuxtips/ecs/cloudmap/namespace"
